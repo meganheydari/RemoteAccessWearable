@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Team8!</title>
+
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<style>
+.container {
+  display: flex;
+}
+.container > div {
+  flex: 1; /*grow*/
+}
+.button {
+
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.button5 {
+  background-color: white;
+  color: black;
+  border: 2px solid #555555;
+}
+
+.button5:hover {
+  background-color: #555555;
+  color: white;
+}
+</style>
+<script type="text/javascript">
+
+	function lightLED() {
+		console.log('LED');
+		$.post('/light');
+	}
+
+    window.onload = function() {
+    
+    var dataPoints = [];
+
+    function getDataPointsFromCSV(csv) {
+        var csvLines = [];
+        var retVar;
+        csvLines = csv.split(/[\r?\n|\r|\n]+/);         
+	      	
+	     	if (csvLines[csvLines.length - 2].length > 0) {
+	      		retVar = csvLines[csvLines.length - 2]
+	  		}
+        return parseInt(retVar);
+        
+    }
+	$.get("data/thermistor.csv", function(data) {
+		var chart1 = new CanvasJS.Chart("chartContainer1", {
+			    animationEnabled: true,
+				theme: "light2", 
+				title:{
+					text: "Body Temp"
+				},
+				axisY: {
+					title: "Temp (C)"
+				},
+				data: [{        
+			type: "column",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Temp",
+			dataPoints: [      
+				{ y: getDataPointsFromCSV(data), label: "User" },
+				]
+			}]
+			});
+		chart1.render();
+	});
+
+
+	$.get("data/battery.csv", function(data) {
+		var chart2 = new CanvasJS.Chart("chartContainer2", {
+			    animationEnabled: true,
+				theme: "light2", 
+				title:{
+					text: "Battery Voltage"
+				},
+				axisY: {
+					title: "Voltage (V)"
+				},
+				data: [{        
+			type: "column",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Volatage",
+			dataPoints: [      
+				{ y: getDataPointsFromCSV(data), label: "User" },
+				]
+			}]
+			});
+		chart2.render();
+	});
+
+	$.get("data/steps.csv", function(data) {
+		var chart3 = new CanvasJS.Chart("chartContainer3", {
+			    animationEnabled: true,
+				theme: "light2", 
+				title:{
+					text: "Steps"
+				},
+				axisY: {
+					title: ""
+				},
+				data: [{        
+			type: "column",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Steps",
+			dataPoints: [      
+				{ y: getDataPointsFromCSV(data), label: "User" },
+				]
+			}]
+			});
+		chart3.render();
+	});
+
+	setInterval(function(){ 
+		// REFRESH THE CHARS EVERY 1 SECOND
+		$.get("data/thermistor.csv", function(data) {
+		var chart1 = new CanvasJS.Chart("chartContainer1", {
+			    animationEnabled: false,
+				theme: "light2", 
+				title:{
+					text: "Body Temp"
+				},
+				axisY: {
+					title: "Temp (C)"
+				},
+				data: [{        
+			type: "column",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Temp",
+			dataPoints: [      
+				{ y: getDataPointsFromCSV(data), label: "User" },
+				]
+			}]
+			});
+		chart1.render();
+	});
+
+
+	$.get("data/battery.csv", function(data) {
+		var chart2 = new CanvasJS.Chart("chartContainer2", {
+			    animationEnabled: false,
+				theme: "light2", 
+				title:{
+					text: "Battery Voltage"
+				},
+				axisY: {
+					title: "Voltage (V)"
+				},
+				data: [{        
+			type: "column",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Volatage",
+			dataPoints: [      
+				{ y: getDataPointsFromCSV(data), label: "User" },
+				]
+			}]
+			});
+		chart2.render();
+	});
+
+	$.get("data/steps.csv", function(data) {
+		var chart3 = new CanvasJS.Chart("chartContainer3", {
+			    animationEnabled: false,
+				theme: "light2", 
+				title:{
+					text: "Steps"
+				},
+				axisY: {
+					title: ""
+				},
+				data: [{        
+			type: "column",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Steps",
+			dataPoints: [      
+				{ y: getDataPointsFromCSV(data), label: "User" },
+				]
+			}]
+			});
+		chart3.render();
+	});
+
+	}, 1000);
+	
+  }
+</script>
+</head>
+<body>
+<h1>Smart Watch Dashboard</h1>
+<div class="container">
+  <div>
+  	<div id="chartContainer1" style="width:100%; height:300px;"></div>
+</div>
+<div>
+  <div id="chartContainer2" style="width:100%; height:300px;"></div>
+</div>  
+<div>
+  <div id="chartContainer3" style="width:100%; height:300px;"></div>
+</div>
+</div>
+<button style= "width:50%;display: block; margin-left: auto;margin-right: auto;"class="button button5"onclick="lightLED()">Locate Watch</button>
+
+</body>
+</html>
